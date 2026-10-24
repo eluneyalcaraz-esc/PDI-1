@@ -24,6 +24,11 @@ function view(
   array $data = [],
   ?string $layout = null,
 ): ResponseInterface {
+  $data['currentUser'] = currentUser();
+  $data['csrfToken'] = csrfToken();
+  $data['flash'] = $_SESSION['flash'] ?? null;
+  unset($_SESSION['flash']);
+  $data['stylesheet'] = $data['stylesheet'] ?? '/index.css';
   $page = $renderer->fetch($template, $data);
 
   $content = $layout
@@ -33,6 +38,6 @@ function view(
   return $renderer->render($response, "layouts/base.php", [
     ...$data,
     "content" => $content,
-    "stylesheet" => $data["stylesheet"] ?? null,
+    "stylesheet" => $data["stylesheet"],
   ]);
 }

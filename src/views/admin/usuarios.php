@@ -15,7 +15,6 @@ $usuarios = $usuarios ?? [];
         <tr>
           <th>ID</th>
           <th>Nombre</th>
-          <th>Rol</th>
           <th>Correo</th>
           <th>Teléfono</th>
           <th>Dirección</th>
@@ -26,7 +25,6 @@ $usuarios = $usuarios ?? [];
           <tr>
             <td><?= htmlspecialchars((string) $usuario['id'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
             <td><?= htmlspecialchars((string) $usuario['nombre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
-            <td><?= htmlspecialchars((string) $usuario['rol'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
             <td><?= htmlspecialchars((string) $usuario['gmail'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
             <td><?= htmlspecialchars((string) $usuario['telefono'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
             <td><?= htmlspecialchars((string) $usuario['direccion'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>

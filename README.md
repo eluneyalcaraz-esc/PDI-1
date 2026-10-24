@@ -24,7 +24,32 @@ Proyecto institucional **E.E.S.T Nº4 de Berazategui**.
 
 - PHP 8.1 o superior.
 - Extensión PDO habilitada.
-- MySQL o PostgreSQL según la configuración en el archivo `.env`.
+- MySQL o MariaDB para las migraciones incluidas en este repositorio.
+
+## Inicio local
+
+1. Copiá `.env.example` como `.env` y configurá el acceso a tu base de datos.
+2. Creá la base indicada en `DB_NAME` (por defecto, `slim_php`).
+3. Instalá dependencias y aplicá las migraciones:
+
+   ```bash
+   composer install
+   composer migrate
+   ```
+
+4. Iniciá el servidor:
+
+   ```bash
+   composer serve
+   ```
+
+   Abrí `http://localhost:8000`. El servidor queda activo hasta que lo detengas
+   con `Ctrl+C`.
+
+Las cuentas se registran con el rol fijo `usuario` y una contraseña. Cada
+usuario puede administrar sus propias publicaciones; el catálogo es visible
+para todos. El carrito se conserva en la base de datos. Al confirmar desde el
+carrito se registra un pedido sin procesar pagos.
 
 ## Migraciones
 

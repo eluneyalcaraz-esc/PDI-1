@@ -6,15 +6,16 @@ $productos = $productos ?? [];
 $error = $error ?? null;
 ?>
 <main>
+  <a class="back-link" href="/">← Volver al inicio</a>
   <h1>Productos</h1>
-  <p><a href="/productos/create">Crear producto</a></p>
+  <p><a class="button button-primary" href="/productos/create">Publicar producto</a></p>
 
   <?php if ($error !== null): ?>
     <p role="alert"><?= htmlspecialchars($error, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
   <?php elseif ($productos === []): ?>
     <p>Todavía no hay productos cargados.</p>
   <?php else: ?>
-    <table>
+    <div class="table-wrap"><table>
       <thead>
         <tr>
           <th>ID</th>
@@ -35,6 +36,6 @@ $error = $error ?? null;
           </tr>
         <?php endforeach; ?>
       </tbody>
-    </table>
+    </table></div>
   <?php endif; ?>
 </main>
