@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $items = $items ?? [];
 $total = $total ?? 0;
+$hasUnavailableItems = $hasUnavailableItems ?? false;
 ?>
 <main class="page-content">
   <a class="back-link" href="/">← Volver al inicio</a>
@@ -22,6 +23,9 @@ $total = $total ?? 0;
           <article class="cart-item">
             <div class="cart-item-details">
               <h2><?= html((string) $item['nombre']) ?></h2>
+              <?php if ($item['estado'] !== 'aprobado'): ?>
+                <p class="notice notice-review">No disponible: pendiente de revisión o no aprobado. Quitalo antes de confirmar el pedido.</p>
+              <?php endif; ?>
               <p><?= html((string) $item['descripcion']) ?></p>
               <strong>$<?= html(number_format((float) $item['precio'], 2, ',', '.')) ?> c/u</strong>
             </div>
@@ -45,7 +49,7 @@ $total = $total ?? 0;
         <p class="summary-note">Todavía no se realiza ningún pago.</p>
         <form method="post" action="/compras/confirmar">
           <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
-          <button class="button button-primary button-wide" type="submit">Confirmar pedido sin pagar</button>
+          <button class="button button-primary button-wide" type="submit" <?= $hasUnavailableItems ? 'disabled' : '' ?>>Confirmar pedido sin pagar</button>
         </form>
       </aside>
     </div>

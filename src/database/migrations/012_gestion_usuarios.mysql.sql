@@ -1,0 +1,2 @@
+ALTER TABLE usuarios
+    ADD COLUMN IF NOT EXISTS estado VARCHAR(20) NOT NULL DEFAULT 'activo';

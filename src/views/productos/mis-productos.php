@@ -23,8 +23,19 @@ $productos = $productos ?? [];
     <section class="products-grid">
       <?php foreach ($productos as $producto): ?>
         <article class="product-card">
+          <?php if (!empty($producto['imagenes'][0]['url'])): ?>
+            <img class="product-card-image" src="<?= html($producto['imagenes'][0]['url']) ?>" alt="<?= html((string) $producto['nombre']) ?>" loading="lazy">
+          <?php else: ?>
+            <div class="product-card-image-placeholder">Sin imagen</div>
+          <?php endif; ?>
           <div class="product-info">
-            <span class="product-tag">Tu publicación</span>
+            <span class="product-tag product-status-<?= html((string) $producto['estado']) ?>">
+              <?= $producto['estado'] === 'pendiente' ? 'Pendiente de revisión' : ($producto['estado'] === 'rechazado' ? 'No aprobado' : 'Aprobado') ?>
+            </span>
+            <?php if (!empty($producto['motivo_revision'])): ?>
+              <p class="review-reason"><?= html((string) $producto['motivo_revision']) ?></p>
+            <?php endif; ?>
+            <span class="category-chip"><?= html($categorias[$producto['categoria']] ?? 'Otros') ?></span>
             <h2 class="product-name"><?= html((string) $producto['nombre']) ?></h2>
             <p class="product-description"><?= html((string) $producto['descripcion']) ?></p>
             <p class="price-wholesale">$<?= html(number_format((float) $producto['precio'], 2, ',', '.')) ?></p>

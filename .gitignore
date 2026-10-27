@@ -8,6 +8,8 @@
 
 # Logs
 *.log
+/public/uploads/productos/*
+!/public/uploads/productos/.gitkeep
 
 # Cache / temp files
 /tmp/

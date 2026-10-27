@@ -5,26 +5,18 @@ declare(strict_types=1);
 $productos = $productos ?? [];
 $search = $search ?? '';
 $tags = $tags ?? [];
+$categories = $categories ?? productCategories();
+$category = $category ?? '';
 $error = $error ?? null;
 ?>
 <section class="hero">
 	<div class="hero-content">
-		<p class="eyebrow">Encontrá lo que necesitás</p>
-		<h1>Productos para hacer crecer tu negocio</h1>
-		<p>Explorá publicaciones de la comunidad y guardá lo que te interese en tu carrito.</p>
-		<a class="button button-light" href="#catalogo">Ver productos</a>
-	</div>
-</section>
-
-<main class="page-content" id="catalogo">
-	<section class="catalog-heading">
-		<div>
-			<p class="eyebrow">Catálogo</p>
-			<h2><?= $search !== '' ? 'Resultados de búsqueda' : 'Productos publicados' ?></h2>
-		</div>
+		<p class="eyebrow">Emprendi conecta emprendedores</p>
+		<h1>Encontrá productos para tu emprendimiento</h1>
+		<p>Explorá el catálogo y descubrí nuevas oportunidades.</p>
 		<form class="search-form" action="/" method="get" role="search">
 			<label class="visually-hidden" for="product-search">Buscar productos</label>
-			<input id="product-search" type="search" name="q" list="product-tags" value="<?= html($search) ?>" placeholder="Ej.: madera, tela, harina">
+			<input id="product-search" type="search" name="q" list="product-tags" value="<?= html($search) ?>" placeholder="¿Qué producto estás buscando?">
 			<datalist id="product-tags">
 				<?php foreach ($tags as $tag): ?>
 					<option value="<?= html($tag) ?>"></option>
@@ -32,7 +24,23 @@ $error = $error ?? null;
 			</datalist>
 			<button class="button button-primary" type="submit">Buscar</button>
 		</form>
+	</article>
+</section>
+
+<main class="page-content" id="catalogo">
+	<section class="catalog-heading">
+		<div>
+			<p class="eyebrow">Catálogo</p>
+			<h2><?= $search !== '' ? 'Resultados de búsqueda' : ($category !== '' ? html($categories[$category] ?? 'Productos publicados') : 'Productos publicados') ?></h2>
+		</div>
 	</section>
+
+	<nav class="category-list" aria-label="Filtrar productos por categoría">
+		<a class="category-chip <?= $category === '' ? 'is-active' : '' ?>" href="<?= $search !== '' ? '/?q=' . rawurlencode($search) : '/' ?>">Todas</a>
+		<?php foreach ($categories as $value => $label): ?>
+			<a class="category-chip <?= $category === $value ? 'is-active' : '' ?>" href="/?categoria=<?= rawurlencode($value) ?><?= $search !== '' ? '&q=' . rawurlencode($search) : '' ?>"><?= html($label) ?></a>
+		<?php endforeach; ?>
+	</nav>
 
 	<?php
 	$visibleTags = $tags;
@@ -66,26 +74,41 @@ $error = $error ?? null;
 	<?php elseif ($productos === []): ?>
 		<section class="empty-state">
 			<h2><?= $search !== '' ? 'No encontramos coincidencias' : 'Todavía no hay productos publicados' ?></h2>
-			<p><?= $search !== '' ? 'Probá con otra palabra o elegí una de las etiquetas disponibles.' : 'Cuando haya publicaciones, vas a poder encontrarlas acá.' ?></p>
-			<?php if ($search !== ''): ?><a class="button button-outline" href="/">Ver todo el catálogo</a><?php endif; ?>
+				<p><?= $search !== '' ? 'Probá con otra palabra o elegí otra categoría.' : 'Cuando haya publicaciones, vas a poder encontrarlas acá.' ?></p>
+				<?php if ($search !== '' || $category !== ''): ?><a class="button button-outline" href="/">Ver todo el catálogo</a><?php endif; ?>
 		</section>
 	<?php else: ?>
-		<section class="products-grid" aria-label="Catálogo de productos">
-			<?php foreach ($productos as $producto): ?>
-				<article class="product-card">
-					<div class="product-card-banner"><span><?= html(mb_strtoupper(mb_substr((string) $producto['nombre'], 0, 1))) ?></span></div>
-					<div class="product-info">
-						<span class="product-tag">Disponible</span>
-						<h3 class="product-name"><?= html((string) $producto['nombre']) ?></h3>
-						<p class="product-description"><?= html((string) $producto['descripcion']) ?></p>
-						<div class="product-price-box">
-							<span class="price-wholesale">$<?= html(number_format((float) $producto['precio'], 2, ',', '.')) ?></span>
-							<span class="price-label">Precio publicado</span>
-						</div>
-						<a class="button button-outline" href="/productos/<?= rawurlencode((string) $producto['id']) ?>">Ver producto</a>
+			<?php
+			$productsByCategory = [];
+			foreach ($productos as $producto) {
+				$productsByCategory[$producto['categoria'] ?? 'otros'][] = $producto;
+			}
+			?>
+			<?php foreach ($productsByCategory as $categoryValue => $categoryProducts): ?>
+				<section class="catalog-category" aria-label="<?= html($categories[$categoryValue] ?? 'Otros') ?>">
+					<h3 class="catalog-category-heading"><?= html($categories[$categoryValue] ?? 'Otros') ?></h3>
+					<div class="products-grid">
+						<?php foreach ($categoryProducts as $producto): ?>
+							<article class="product-card">
+								<?php if (!empty($producto['imagenes'][0]['url'])): ?>
+									<img class="product-card-image" src="<?= html($producto['imagenes'][0]['url']) ?>" alt="<?= html((string) $producto['nombre']) ?>" loading="lazy">
+								<?php else: ?>
+									<div class="product-card-image-placeholder">Sin imagen</div>
+								<?php endif; ?>
+								<div class="product-info">
+									<span class="product-tag">Disponible</span>
+									<h4 class="product-name"><?= html((string) $producto['nombre']) ?></h4>
+									<p class="product-description"><?= html((string) $producto['descripcion']) ?></p>
+									<div class="product-price-box">
+										<span class="price-wholesale">$<?= html(number_format((float) $producto['precio'], 2, ',', '.')) ?></span>
+										<span class="price-label">Precio publicado</span>
+									</div>
+									<a class="button button-outline" href="/productos/<?= rawurlencode((string) $producto['id']) ?>">Ver producto</a>
+								</div>
+							</div>
+						<?php endforeach; ?>
 					</div>
-				</article>
+				</section>
 			<?php endforeach; ?>
-		</section>
-	<?php endif; ?>
+		<?php endif; ?>
 </main>

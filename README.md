@@ -1,4 +1,4 @@
-# Overshine Contacts
+# Emprendi
 
 **Descripción:**
 Página donde emprendedores y distribuidores puedan empezar o expandir su negocio, crear su propia página o publicación de forma sencilla, contactar con proveedores y vender sus productos.
@@ -15,7 +15,7 @@ Proyecto institucional **E.E.S.T Nº4 de Berazategui**.
 
 - Para pequeños o grandes comerciantes, proveedores y empresas.
 - Quienes precisan materia prima para sus productos o vender la que poseen.
-- El Overshine Contacts es una página informativa de comercio.
+- Emprendi es una plataforma para conectar emprendimientos, proveedores y compradores.
 - Que permite desarrollar tus ideas de negocio con facilidad.
 - Diferente a MercadoLibre y Shoppify.
 - Nuestro proyecto permite encontrar información, materiales y proveedores, y obtenerlos mediante este portal de compras.
@@ -28,35 +28,62 @@ Proyecto institucional **E.E.S.T Nº4 de Berazategui**.
 
 ## Inicio local
 
-1. Copiá `.env.example` como `.env` y configurá el acceso a tu base de datos.
+1. Copiá `.env.example` como `.env`, configurá el acceso a la base de datos y reemplazá `ADMIN_PIN` por un PIN largo, aleatorio y compartido solo con las personas que administran el sitio.
 2. Creá la base indicada en `DB_NAME` (por defecto, `slim_php`).
 3. Instalá dependencias y aplicá las migraciones:
 
    ```bash
    composer install
-   composer migrate
+   composer run-script migrate
    ```
 
 4. Iniciá el servidor:
 
    ```bash
-   composer serve
+   composer run-script serve
    ```
 
    Abrí `http://localhost:8000`. El servidor queda activo hasta que lo detengas
    con `Ctrl+C`.
 
 Las cuentas se registran con el rol fijo `usuario` y una contraseña. Cada
-usuario puede administrar sus propias publicaciones; el catálogo es visible
-para todos. El carrito se conserva en la base de datos. Al confirmar desde el
-carrito se registra un pedido sin procesar pagos.
+usuario puede administrar sus propias publicaciones; el catálogo muestra
+únicamente productos aprobados. Las publicaciones nuevas y las que se editan
+quedan pendientes hasta que un administrador las revise en `/admin`.
+El panel usa el PIN compartido configurado como `ADMIN_PIN` en `.env`; cualquier
+persona que conozca ese PIN puede revisar productos y gestionar cuentas. Desde
+el panel se pueden editar datos de usuarios, bloquear o desbloquear el acceso y
+eliminar cuentas. Al eliminar una cuenta se anonimiza la información personal,
+se retiran sus productos del catálogo y se conserva el historial de pedidos.
+Al rechazar una publicación, el administrador debe indicar el motivo, que el
+vendedor verá en “Mis productos”.
+
+Cada producto requiere categoría, precio válido, descripción de al menos 30
+caracteres y cuatro palabras, confirmación de que es real y al menos una imagen
+JPEG, PNG o WebP. Se permiten hasta cinco imágenes de 5 MB cada una. Las imágenes
+se guardan en `public/uploads/productos/`; ese directorio se ignora en Git para
+no subir archivos de usuarios. El servidor también limita cada cuenta a cinco
+publicaciones por hora y veinte por día, y bloquea nombres duplicados del mismo
+usuario. La revisión manual es la que determina si una publicación aparece en
+el catálogo.
+
+Al aplicar la migración nueva, los productos anteriores que no tengan imágenes
+quedan pendientes; su dueño puede agregarles una foto desde “Editar producto”
+y volverán a la cola de revisión.
+
+El carrito se conserva en la base de datos. No permite agregar ni confirmar
+productos que estén pendientes o no aprobados. Al confirmar desde el carrito se
+registra un pedido sin procesar pagos.
+
+Si PHP rechaza archivos antes de llegar a la aplicación, revisá `php.ini` y
+configurá `upload_max_filesize=5M`, `post_max_size=26M` y `max_file_uploads=5`.
 
 ## Migraciones
 
 Colocá tus archivos `.sql` en `src/database/migrations/` y ejecuta:
 
 ```bash
-composer migrate
+composer run-script migrate
 ```
 
 ## Licencia
