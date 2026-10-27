@@ -42,7 +42,7 @@ function catalogOrderBy(string $sort): string
     'precio_asc' => ' ORDER BY precio ASC, id DESC',
     'precio_desc' => ' ORDER BY precio DESC, id DESC',
     'nombre' => ' ORDER BY nombre ASC, id DESC',
-    default => ' ORDER BY id DESC',
+    default => ' ORDER BY creado_en DESC, id DESC',
   };
 }
 

@@ -32,7 +32,7 @@ $hasUnavailableItems = $hasUnavailableItems ?? false;
             <form class="quantity-form" method="post" action="/carrito/<?= rawurlencode((string) $item['id']) ?>/cantidad">
               <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
               <label for="cantidad-<?= html((string) $item['id']) ?>">Cantidad</label>
-              <input id="cantidad-<?= html((string) $item['id']) ?>" name="cantidad" type="number" min="1" max="99" value="<?= html((string) $item['cantidad']) ?>" required>
+              <input id="cantidad-<?= html((string) $item['id']) ?>" name="cantidad" type="number" min="1" max="<?= html((string) ($item['stock'] ?? 1000000)) ?>" value="<?= html((string) $item['cantidad']) ?>" required>
               <button class="button button-outline" type="submit">Actualizar</button>
             </form>
             <form method="post" action="/carrito/<?= rawurlencode((string) $item['id']) ?>/eliminar">

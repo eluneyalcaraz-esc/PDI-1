@@ -108,14 +108,13 @@ $app->get('/', function ($request, $response) use ($renderer) {
   $favoriteProductIds = [];
   $tags = [];
   $categories = productCategories();
-  $availabilityOnly = ($queryParams['disponible'] ?? '') === '1';
   $minimumPrice = trim((string) ($queryParams['precio_min'] ?? ''));
   $maximumPrice = trim((string) ($queryParams['precio_max'] ?? ''));
   $sortOptions = [
-    'recientes' => 'Más recientes',
+    'recientes' => 'Más reciente',
     'precio_asc' => 'Menor precio',
     'precio_desc' => 'Mayor precio',
-    'nombre' => 'Nombre A-Z',
+    'nombre' => 'De la A-Z',
   ];
   if (!isset($sortOptions[$sort])) {
     $sort = 'recientes';
@@ -171,9 +170,6 @@ $app->get('/', function ($request, $response) use ($renderer) {
         $conditions[] = 'categoria = :category';
         $parameters['category'] = $category;
       }
-      if ($availabilityOnly) {
-        $conditions[] = 'stock > 0';
-      }
       if ($minimumPrice !== '') {
         $conditions[] = 'precio >= :precio_min';
         $parameters['precio_min'] = $minimumPrice;
@@ -224,7 +220,6 @@ $app->get('/', function ($request, $response) use ($renderer) {
     'pages' => max(1, (int) ceil($totalProducts / $perPage)),
     'totalProducts' => $totalProducts,
     'favoriteProductIds' => $favoriteProductIds,
-    'availabilityOnly' => $availabilityOnly,
     'minimumPrice' => $minimumPrice,
     'maximumPrice' => $maximumPrice,
     'error' => $error,
@@ -1038,7 +1033,7 @@ $app->post('/carrito/agregar', function ($request, $response) use ($requireCsrf,
     return $response->withHeader('Location', $loginUrl($returnTo))->withStatus(303);
   }
 
-  if ($productId === false || $productId < 1 || $quantity === false || $quantity < 1 || $quantity > 99) {
+  if ($productId === false || $productId < 1 || $quantity === false || $quantity < 1 || $quantity > 1000000) {
     $_SESSION['flash'] = 'Elegí un producto y una cantidad válida.';
     return $response->withHeader('Location', '/')->withStatus(303);
   }
@@ -1146,8 +1141,8 @@ $app->post('/carrito/{id}/cantidad', function ($request, $response, array $args)
 
   $data = $request->getParsedBody() ?? [];
   $quantity = filter_var($data['cantidad'] ?? null, FILTER_VALIDATE_INT);
-  if ($quantity === false || $quantity < 1 || $quantity > 99) {
-    $_SESSION['flash'] = 'La cantidad debe estar entre 1 y 99.';
+  if ($quantity === false || $quantity < 1 || $quantity > 1000000) {
+    $_SESSION['flash'] = 'La cantidad debe estar entre 1 y 1.000.000.';
     return $response->withHeader('Location', '/carrito')->withStatus(303);
   }
 

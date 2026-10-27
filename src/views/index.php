@@ -14,14 +14,12 @@ $page = $page ?? 1;
 $pages = $pages ?? 1;
 $totalProducts = $totalProducts ?? 0;
 $favoriteProductIds = $favoriteProductIds ?? [];
-$availabilityOnly = $availabilityOnly ?? false;
 $minimumPrice = $minimumPrice ?? '';
 $maximumPrice = $maximumPrice ?? '';
 $currentQuery = [
   'q' => $search,
   'categoria' => $category,
   'orden' => $sort,
-  'disponible' => $availabilityOnly ? '1' : '',
   'precio_min' => $minimumPrice,
   'precio_max' => $maximumPrice,
 ];
@@ -29,9 +27,7 @@ $currentQuery = array_filter($currentQuery, static fn(string $value): bool => $v
 ?>
 <section class="hero">
   <div class="hero-content">
-    <p class="eyebrow">Emprendi conecta emprendedores</p>
-    <h1>Encontrá productos para tu emprendimiento</h1>
-    <p>Explorá el catálogo y descubrí nuevas oportunidades.</p>
+    <h1>Emprendi conecta emprendedores</h1>
     <form class="search-form" action="/" method="get" role="search">
       <label class="visually-hidden" for="product-search">Buscar productos</label>
       <input id="product-search" type="search" name="q" list="product-tags" value="<?= html($search) ?>" placeholder="¿Qué producto estás buscando?">
@@ -100,10 +96,6 @@ $currentQuery = array_filter($currentQuery, static fn(string $value): bool => $v
           <?php endforeach; ?>
         </select>
       </label>
-      <label class="catalog-available-filter">
-        <input type="checkbox" name="disponible" value="1" <?= $availabilityOnly ? 'checked' : '' ?>>
-        Con stock confirmado
-      </label>
       <label>
         Precio mínimo (ARS)
         <input name="precio_min" type="number" min="0" step="0.01" value="<?= html($minimumPrice) ?>" inputmode="decimal">
@@ -119,7 +111,7 @@ $currentQuery = array_filter($currentQuery, static fn(string $value): bool => $v
       <section class="empty-state">
         <h2><?= $search !== '' ? 'No encontramos coincidencias' : 'Todavía no hay productos publicados' ?></h2>
         <p><?= $search !== '' ? 'Probá con otra palabra o ajustá los filtros.' : 'Cuando haya publicaciones, vas a poder encontrarlas acá.' ?></p>
-        <?php if ($search !== '' || $category !== '' || $availabilityOnly || $minimumPrice !== '' || $maximumPrice !== ''): ?>
+        <?php if ($search !== '' || $category !== '' || $minimumPrice !== '' || $maximumPrice !== ''): ?>
           <a class="button button-outline" href="/">Ver todo el catálogo</a>
         <?php endif; ?>
       </section>
@@ -159,6 +151,18 @@ $currentQuery = array_filter($currentQuery, static fn(string $value): bool => $v
               <?php endif; ?>
               <div class="product-card-actions">
                 <a class="button button-outline" href="/productos/<?= rawurlencode((string) $producto['id']) ?>">Ver producto</a>
+                <?php if ($currentUser !== null && (int) $producto['usuario_id'] !== (int) $currentUser['id']): ?>
+                  <?php if ($hasStock && (int) $producto['stock'] >= (int) $producto['cantidad_minima']): ?>
+                    <form method="post" action="/carrito/agregar">
+                      <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
+                      <input type="hidden" name="producto_id" value="<?= html((string) $producto['id']) ?>">
+                      <input type="hidden" name="cantidad" value="<?= (int) $producto['cantidad_minima'] ?>">
+                      <button class="button button-primary" type="submit">Agregar al carrito</button>
+                    </form>
+                  <?php else: ?>
+                    <button class="button button-outline" type="button" disabled>Sin stock disponible</button>
+                  <?php endif; ?>
+                <?php endif; ?>
                 <?php if ($currentUser !== null): ?>
                   <form method="post" action="/productos/<?= rawurlencode((string) $producto['id']) ?>/favorito">
                     <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
