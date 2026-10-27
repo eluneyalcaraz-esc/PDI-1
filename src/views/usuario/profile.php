@@ -31,6 +31,22 @@ $error = $error ?? null;
 					<label for="direccion">Dirección</label>
 					<input id="direccion" name="direccion" type="text" maxlength="255" value="<?= html((string) ($profile['direccion'] ?? '')) ?>" required>
 				</div>
+				<div class="form-field">
+					<label for="localidad">Localidad (visible en tu perfil público de vendedor)</label>
+					<input id="localidad" name="localidad" type="text" maxlength="100" value="<?= html((string) ($profile['localidad'] ?? '')) ?>">
+				</div>
+				<div class="form-field">
+					<label for="provincia">Provincia (visible en tu perfil público de vendedor)</label>
+					<input id="provincia" name="provincia" type="text" maxlength="100" value="<?= html((string) ($profile['provincia'] ?? '')) ?>">
+				</div>
+				<div class="form-field">
+					<label for="codigo_postal">Código postal para envíos</label>
+					<input id="codigo_postal" name="codigo_postal" type="text" maxlength="12" value="<?= html((string) ($profile['codigo_postal'] ?? '')) ?>">
+				</div>
+				<div class="form-field form-field-full">
+					<label for="descripcion_vendedor">Presentación de tu emprendimiento</label>
+					<textarea id="descripcion_vendedor" name="descripcion_vendedor" maxlength="500" rows="3"><?= html((string) ($profile['descripcion_vendedor'] ?? '')) ?></textarea>
+				</div>
 				<div class="form-field form-field-full">
 					<label for="password">Nueva contraseña (opcional)</label>
 					<input id="password" name="password" type="password" minlength="8" autocomplete="new-password">

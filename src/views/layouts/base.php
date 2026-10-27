@@ -3,7 +3,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title><?= html($title ?? 'Emprendi') ?></title>
+        <title><?= html($pageTitle ?? $title ?? 'Emprendi') ?></title>
+        <meta name="description" content="<?= html($metaDescription ?? 'Emprendi conecta emprendedores con productos y proveedores para sus negocios.') ?>">
+        <?php if (!empty($ogImage)): ?><meta property="og:image" content="<?= html((string) $ogImage) ?>"><?php endif; ?>
         <?php if (!empty($stylesheet)): ?>
             <link rel="stylesheet" href="<?= html((string) $stylesheet) ?>" />
         <?php endif; ?>
@@ -28,7 +30,10 @@
                                 <div class="account-menu-panel">
                                     <span class="menu-greeting">Hola, <?= html($currentUser['nombre']) ?></span>
                                     <a href="/mis-productos">Ver mis productos</a>
+                                    <a href="/ventas">Ventas recibidas</a>
                                     <a href="/mis-compras">Ver mis compras</a>
+                                    <a href="/favoritos">Mis favoritos</a>
+                                    <a href="/notificaciones">Notificaciones</a>
                                     <a href="/perfil">Mi perfil</a>
                                     <form action="/usuarios/logout" method="post">
                                         <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">

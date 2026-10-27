@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 $productos = $productos ?? [];
 $usuarios = $usuarios ?? [];
+$reportes = $reportes ?? [];
 $categorias = $categorias ?? productCategories();
 $adminAuthenticated = $adminAuthenticated ?? false;
 $error = $error ?? null;
@@ -41,6 +42,7 @@ $error = $error ?? null;
 
     <nav class="admin-sections" aria-label="Secciones del panel">
       <a href="#productos">Publicaciones <span><?= count($productos) ?></span></a>
+      <a href="#reportes">Reportes <span><?= count($reportes) ?></span></a>
       <a href="#usuarios">Usuarios <span><?= count(array_filter($usuarios, static fn(array $usuario): bool => $usuario['estado'] !== 'eliminado')) ?></span></a>
     </nav>
 
@@ -87,6 +89,44 @@ $error = $error ?? null;
                   <label for="reason-<?= html((string) $producto['id']) ?>">Motivo del rechazo (mínimo 10 caracteres)</label>
                   <textarea id="reason-<?= html((string) $producto['id']) ?>" name="motivo" minlength="10" maxlength="500" required></textarea>
                   <button class="button button-danger" type="submit">Rechazar publicación</button>
+                </form>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+    </section>
+
+    <section class="admin-section" id="reportes">
+      <div class="admin-section-heading">
+        <div>
+          <h2>Reportes de publicaciones</h2>
+          <p>Revisá avisos de compradores para mantener la información confiable.</p>
+        </div>
+        <span class="admin-count"><?= count($reportes) ?> pendientes</span>
+      </div>
+      <?php if ($reportes === []): ?>
+        <div class="empty-state"><h3>No hay reportes pendientes</h3></div>
+      <?php else: ?>
+        <div class="admin-users">
+          <?php foreach ($reportes as $reporte): ?>
+            <article class="admin-user-card">
+              <div>
+                <h3><?= html((string) $reporte['producto']) ?></h3>
+                <p>Motivo: <?= html(str_replace('_', ' ', (string) $reporte['motivo'])) ?></p>
+                <p><?= html((string) $reporte['detalle']) ?></p>
+                <small>Reportado por <?= html((string) ($reporte['reportante'] ?? 'usuario eliminado')) ?> · <?= html((string) $reporte['creado_en']) ?></small>
+              </div>
+              <div class="admin-user-actions">
+                <form method="post" action="/admin/reportes/<?= rawurlencode((string) $reporte['id']) ?>/accion">
+                  <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
+                  <input type="hidden" name="accion" value="descartar">
+                  <button class="button button-outline" type="submit">Revisado, mantener publicación</button>
+                </form>
+                <form method="post" action="/admin/reportes/<?= rawurlencode((string) $reporte['id']) ?>/accion">
+                  <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
+                  <input type="hidden" name="accion" value="retirar">
+                  <button class="button button-danger" type="submit">Retirar publicación</button>
                 </form>
               </div>
             </article>

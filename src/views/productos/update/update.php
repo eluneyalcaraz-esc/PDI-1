@@ -30,6 +30,29 @@ $error = $error ?? null;
       <div class="form-field">
         <label for="precio">Precio</label>
         <input id="precio" name="precio" type="number" min="0.01" max="99999999.99" step="0.01" value="<?= html((string) ($producto['precio'] ?? '')) ?>" required>
+        <small>Precio por <?= html((string) ($producto['unidad'] ?? 'unidad')) ?> en pesos argentinos (ARS).</small>
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="condicion">Estado del producto</label>
+          <select id="condicion" name="condicion" required>
+            <option value="nuevo" <?= ($producto['condicion'] ?? 'nuevo') === 'nuevo' ? 'selected' : '' ?>>Nuevo</option>
+            <option value="usado" <?= ($producto['condicion'] ?? '') === 'usado' ? 'selected' : '' ?>>Usado</option>
+            <option value="reacondicionado" <?= ($producto['condicion'] ?? '') === 'reacondicionado' ? 'selected' : '' ?>>Reacondicionado</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="unidad">Unidad de venta</label>
+          <input id="unidad" name="unidad" type="text" maxlength="40" value="<?= html((string) ($producto['unidad'] ?? 'unidad')) ?>" required>
+        </div>
+        <div class="form-field">
+          <label for="cantidad_minima">Cantidad mínima de compra</label>
+          <input id="cantidad_minima" name="cantidad_minima" type="number" min="1" max="1000000" value="<?= html((string) ($producto['cantidad_minima'] ?? '1')) ?>" required>
+        </div>
+        <div class="form-field">
+          <label for="stock">Unidades disponibles</label>
+          <input id="stock" name="stock" type="number" min="1" max="1000000" value="<?= html((string) ($producto['stock'] ?? '')) ?>" required>
+        </div>
       </div>
       <div class="form-field">
         <label for="descripcion">Descripción (mínimo 30 caracteres)</label>

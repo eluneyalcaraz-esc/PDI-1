@@ -47,10 +47,11 @@ $hasUnavailableItems = $hasUnavailableItems ?? false;
         <p><span>Productos</span><strong><?= count($items) ?></strong></p>
         <p class="summary-total"><span>Total estimado</span><strong>$<?= html(number_format((float) $total, 2, ',', '.')) ?></strong></p>
         <p class="summary-note">Todavía no se realiza ningún pago.</p>
-        <form method="post" action="/compras/confirmar">
-          <input type="hidden" name="csrf_token" value="<?= html($csrfToken) ?>">
-          <button class="button button-primary button-wide" type="submit" <?= $hasUnavailableItems ? 'disabled' : '' ?>>Confirmar pedido sin pagar</button>
-        </form>
+        <?php if ($hasUnavailableItems): ?>
+          <button class="button button-primary button-wide" type="button" disabled>Continuar con el pedido</button>
+        <?php else: ?>
+          <a class="button button-primary button-wide" href="/compras/checkout">Continuar con el pedido</a>
+        <?php endif; ?>
       </aside>
     </div>
   <?php endif; ?>

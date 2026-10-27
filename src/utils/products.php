@@ -36,12 +36,24 @@ function productCategories(): array
   ];
 }
 
+function catalogOrderBy(string $sort): string
+{
+  return match ($sort) {
+    'precio_asc' => ' ORDER BY precio ASC, id DESC',
+    'precio_desc' => ' ORDER BY precio DESC, id DESC',
+    'nombre' => ' ORDER BY nombre ASC, id DESC',
+    default => ' ORDER BY id DESC',
+  };
+}
+
 /**
  * @param array<string, string> $product
  */
 function isValidProductPublication(array $product, bool $confirmed): bool
 {
   preg_match_all('/[\p{L}\p{N}]{2,}/u', $product['descripcion'], $descriptionWords);
+  $quantity = filter_var($product['stock'] ?? null, FILTER_VALIDATE_INT);
+  $minimum = filter_var($product['cantidad_minima'] ?? null, FILTER_VALIDATE_INT);
 
   return mb_strlen($product['nombre']) >= 3
     && mb_strlen($product['nombre']) <= 255
@@ -51,7 +63,19 @@ function isValidProductPublication(array $product, bool $confirmed): bool
     && strlen($product['descripcion']) <= 1000
     && count($descriptionWords[0]) >= 4
     && array_key_exists($product['categoria'], productCategories())
+    && in_array($product['condicion'] ?? '', ['nuevo', 'usado', 'reacondicionado'], true)
+    && preg_match('/^[\p{L}\p{N} -]{1,40}$/uD', $product['unidad'] ?? '') === 1
+    && $quantity !== false
+    && $quantity >= 1
+    && $minimum !== false
+    && $minimum >= 1
+    && $minimum <= $quantity
     && $confirmed;
+}
+
+function formatArs(float|string|int $amount): string
+{
+  return '$ ' . number_format((float) $amount, 2, ',', '.') . ' ARS';
 }
 
 /**

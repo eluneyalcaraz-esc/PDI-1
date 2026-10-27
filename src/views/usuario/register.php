@@ -36,6 +36,18 @@ $formData = $formData ?? [];
 					<input id="direccion" name="direccion" type="text" maxlength="255" autocomplete="street-address" value="<?= html((string) ($formData['direccion'] ?? '')) ?>" required>
 				</div>
 				<div class="form-field">
+					<label for="localidad">Localidad</label>
+					<input id="localidad" name="localidad" type="text" maxlength="100" autocomplete="address-level2" value="<?= html((string) ($formData['localidad'] ?? '')) ?>">
+				</div>
+				<div class="form-field">
+					<label for="provincia">Provincia</label>
+					<input id="provincia" name="provincia" type="text" maxlength="100" autocomplete="address-level1" value="<?= html((string) ($formData['provincia'] ?? '')) ?>">
+				</div>
+				<div class="form-field">
+					<label for="codigo_postal">Código postal</label>
+					<input id="codigo_postal" name="codigo_postal" type="text" maxlength="12" autocomplete="postal-code" value="<?= html((string) ($formData['codigo_postal'] ?? '')) ?>">
+				</div>
+				<div class="form-field">
 					<label for="password">Contraseña</label>
 					<input id="password" name="password" type="password" minlength="8" autocomplete="new-password" required>
 				</div>

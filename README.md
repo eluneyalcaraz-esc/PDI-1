@@ -71,9 +71,32 @@ Al aplicar la migración nueva, los productos anteriores que no tengan imágenes
 quedan pendientes; su dueño puede agregarles una foto desde “Editar producto”
 y volverán a la cola de revisión.
 
-El carrito se conserva en la base de datos. No permite agregar ni confirmar
-productos que estén pendientes o no aprobados. Al confirmar desde el carrito se
-registra un pedido sin procesar pagos.
+El catálogo ofrece búsqueda, categorías, filtros, favoritos y opiniones. Las
+opiniones solo se habilitan para los productos de pedidos que el vendedor marcó
+como entregados. Los vendedores pueden consultar los pedidos y cambiar su
+estado desde «Ventas recibidas».
+
+Al confirmar el carrito se valida y reserva el stock; el pedido se separa por
+vendedor. El vendedor debe cotizar el envío real de Correo Argentino antes de
+que el comprador pueda pagar. La cotización y el número de seguimiento se
+cargan manualmente: todavía no existe una integración de tarifas, etiquetas ni
+seguimiento con la API de Correo Argentino.
+
+Checkout Pro de Mercado Pago está deshabilitado de forma predeterminada. Para
+habilitarlo, configurá `APP_URL` como un dominio público con HTTPS, y agregá
+`MP_ACCESS_TOKEN` y `MP_WEBHOOK_SECRET` al `.env` desde el panel de
+desarrolladores de Mercado Pago. Configurá en esa aplicación la notificación
+Webhook de pagos hacia
+`https://tu-dominio/integraciones/mercadopago/webhook`. El token y el secreto
+son credenciales privadas: nunca los subas al repositorio ni los compartas.
+No se aceptan pagos si falta cualquiera de estas variables o si `APP_URL` no
+usa HTTPS. El pago es centralizado: los fondos se acreditan a la cuenta de
+Mercado Pago de Emprendi; la liquidación a vendedores no está automatizada.
+Emprendi no cobra comisión de plataforma, aunque Mercado Pago puede aplicar
+sus propios cargos por procesamiento.
+
+Si no están configuradas las credenciales de Mercado Pago o una URL HTTPS
+pública, el sitio informa que el pago está deshabilitado y no simula cobros.
 
 Si PHP rechaza archivos antes de llegar a la aplicación, revisá `php.ini` y
 configurá `upload_max_filesize=5M`, `post_max_size=26M` y `max_file_uploads=5`.
